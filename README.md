@@ -1,2 +1,7 @@
-# loggerjs
-Javascript library for logging.
+# utiljs
+Lightweight javascript utility library.
+
+## Modules
+
+ - Logger
+ - Query
