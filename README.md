@@ -5,3 +5,4 @@ Lightweight javascript utility library.
 
  - Logger
  - Query
+ - Dictionary (DictionaryItem)

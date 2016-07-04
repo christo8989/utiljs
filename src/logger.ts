@@ -8,8 +8,8 @@ class Logger {
 
     private level;
 
-    public constructor(getParameter: Function) {
-        let parameter = getParameter('--level');
+    public constructor(private urlHelper: Query) {
+        let parameter = urlHelper.getParameter('--level');
         this.level = parameter == null
             ? this.levels.INFO
             : this.getLevelObject(parameter).value;
@@ -65,22 +65,19 @@ class Logger {
     }
 
     private getLevelObject(id: any) {
+        let result = { name: 'INFO', value: this.levels.INFO };
         if (typeof(id) !== 'string' && typeof(id) !== 'number') {
             // TODO: Log error?
-            return;
+            return result;
         }
 
         id = id.toString();
-
-        let result;
         for (let property in this.levels) {
             if (this.levels.hasOwnProperty(property)) {
                 if (id.toUpperCase() === property.toUpperCase()
                     || id == this.levels[property]) { // tslint:disable-line
-                    result = {
-                        name: property,
-                        value: this.levels[property],
-                    };
+                    result.name = property;
+                    result.value = this.levels[property];
                 }
             }
         }
