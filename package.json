@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/christo8989/loggerjs.git"
+    "url": "git+https://github.com/christo8989/utiljs.git"
   },
   "keywords": [
     "typescript",
@@ -18,9 +18,9 @@
   "author": "Christopher Jeffery",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/christo8989/loggerjs/issues"
+    "url": "https://github.com/christo8989/utilsjs/issues"
   },
-  "homepage": "https://github.com/christo8989/loggerjs#readme",
+  "homepage": "https://github.com/christo8989/utiljs.git#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-rename": "^1.2.2",
