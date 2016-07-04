@@ -1,8 +1,8 @@
 declare class Logger {
-    private urlHelper;
+    private uriHelper;
     private levels;
     private level;
-    constructor(urlHelper: Query);
+    constructor(uriHelper: Uri);
     log(...args: any[]): void;
     logVerbose(...args: any[]): void;
     logMetric(name: string, fn: Function, ...args: any[]): any;
