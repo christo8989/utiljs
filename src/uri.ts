@@ -1,6 +1,6 @@
 'use-strict';
 
-class Query {
+class Uri {
     // https://www.domain.com:443/path/name?query=string#hash
     private protocol: string; // https:
     private host: string; // www.domain.com

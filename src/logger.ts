@@ -8,8 +8,8 @@ class Logger {
 
     private level;
 
-    public constructor(private urlHelper: Query) {
-        let parameter = urlHelper.getParameter('--level');
+    public constructor(private uriHelper: Uri) {
+        let parameter = uriHelper.getParameter('--level');
         this.level = parameter == null
             ? this.levels.INFO
             : this.getLevelObject(parameter).value;

@@ -4,5 +4,5 @@ Lightweight javascript utility library.
 ## Modules
 
  - Logger
- - Query
+ - Uri 
  - Dictionary (DictionaryItem)
