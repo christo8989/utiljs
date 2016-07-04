@@ -1,12 +1,12 @@
 'use-strict';
 var Logger = (function () {
-    function Logger(urlHelper) {
-        this.urlHelper = urlHelper;
+    function Logger(uriHelper) {
+        this.uriHelper = uriHelper;
         this.levels = {
             INFO: 0,
             VERBOSE: 1
         };
-        var parameter = urlHelper.getParameter('--level');
+        var parameter = uriHelper.getParameter('--level');
         this.level = parameter == null
             ? this.levels.INFO
             : this.getLevelObject(parameter).value;
