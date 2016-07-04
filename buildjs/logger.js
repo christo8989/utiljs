@@ -1,11 +1,12 @@
 'use-strict';
 var Logger = (function () {
-    function Logger(getParameter) {
+    function Logger(urlHelper) {
+        this.urlHelper = urlHelper;
         this.levels = {
             INFO: 0,
             VERBOSE: 1
         };
-        var parameter = getParameter('--level');
+        var parameter = urlHelper.getParameter('--level');
         this.level = parameter == null
             ? this.levels.INFO
             : this.getLevelObject(parameter).value;
@@ -61,20 +62,18 @@ var Logger = (function () {
         return this.getLevelName(this.level);
     };
     Logger.prototype.getLevelObject = function (id) {
+        var result = { name: 'INFO', value: this.levels.INFO };
         if (typeof (id) !== 'string' && typeof (id) !== 'number') {
             // TODO: Log error?
-            return;
+            return result;
         }
         id = id.toString();
-        var result;
         for (var property in this.levels) {
             if (this.levels.hasOwnProperty(property)) {
                 if (id.toUpperCase() === property.toUpperCase()
                     || id == this.levels[property]) {
-                    result = {
-                        name: property,
-                        value: this.levels[property]
-                    };
+                    result.name = property;
+                    result.value = this.levels[property];
                 }
             }
         }
