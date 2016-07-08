@@ -1,7 +1,7 @@
 # utiljs
 Lightweight javascript utility library.
 
-## Modules
+## Classes
 
  - Logger
  - LoggerLevels
