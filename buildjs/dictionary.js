@@ -1,66 +1,87 @@
 'use-strict';
-var DictionaryItem = (function () {
-    function DictionaryItem(key, value) {
-        this.key = key;
-        this.value = value;
-        this.IsDictionaryItem = true;
-    }
-    return DictionaryItem;
-}());
 var Dictionary = (function () {
-    function Dictionary(dictionary) {
-        if (Array.isArray(dictionary)) {
-            // Array of DictionaryItems
-            for (var item in dictionary) {
-                if (dictionary.hasOwnProperty(item)) {
-                    this.addDictionaryItem(dictionary[item]);
-                }
-            }
-        }
-        else if (dictionary != null && dictionary.IsDictionaryItem) {
-            // Object of DictionaryItem
-            this.addDictionaryItem(dictionary);
-        }
-        else if (dictionary != null) {
-            // Object
-            for (var item in dictionary) {
-                if (dictionary.hasOwnProperty(item)) {
-                    var key = item;
-                    var value = dictionary[item];
-                    this[key] = value;
+    function Dictionary(object) {
+        if (object != null) {
+            for (var property in object) {
+                if (object.hasOwnProperty(property)) {
+                    this[property] = object[property];
                 }
             }
         }
     }
-    Dictionary.prototype.getDictionary = function () {
-        return this;
+    /**
+     * Returns a copy of this object.
+     */
+    Dictionary.prototype.clone = function () {
+        var result = new Dictionary(this);
+        return result;
     };
-    Dictionary.prototype.getKeys = function () {
+    /**
+     * Checks if the key exists.
+     * @param {string} key
+     */
+    Dictionary.prototype.exists = function (key) {
+        var result = this.hasOwnProperty(key);
+        return result;
+    };
+    /**
+     * Returns all the keys.
+     */
+    Dictionary.prototype.keys = function () {
         var result = [];
-        for (var item in this) {
-            if (this.hasOwnProperty(item)) {
-                result.push(item);
+        for (var key in this) {
+            if (this.exists(key)) {
+                result.push(key);
             }
         }
         return result;
     };
-    Dictionary.prototype.getValues = function () {
+    /**
+     * Returns all the values.
+     */
+    Dictionary.prototype.values = function () {
         var result = [];
-        for (var item in this) {
-            if (this.hasOwnProperty(item)) {
-                result.push(this[item]);
+        for (var key in this) {
+            if (this.exists(key)) {
+                result.push(this[key]);
             }
         }
         return result;
     };
-    Dictionary.prototype.getValue = function (key) {
-        return this[key];
+    /**
+     * Adds a the value if the key doesn't exist.
+     * @param {string} key
+     * @param {any} value
+     */
+    Dictionary.prototype.tryAdd = function (key, value) {
+        var isAdd = !this.exists(key) && typeof (value) !== 'undefined';
+        if (isAdd) {
+            this[key] = value;
+        }
+        return isAdd;
     };
-    Dictionary.prototype.addItem = function (key, value) {
-        this[key] = value;
+    /**
+     * Updates the value if the key exists.
+     * @param {string} key
+     * @param {any} value
+     */
+    Dictionary.prototype.tryUpdate = function (key, value) {
+        var isUpdate = this.exists(key) && typeof (value) !== 'undefined';
+        if (isUpdate) {
+            this[key] = value;
+        }
+        return isUpdate;
     };
-    Dictionary.prototype.addDictionaryItem = function (item) {
-        this[item.key] = item.value;
+    /**
+     * Deletes the item if the key exists.
+     * @param {string} key
+     */
+    Dictionary.prototype.tryDelete = function (key) {
+        var isDelete = this.exists(key);
+        if (isDelete) {
+            delete this[key];
+        }
+        return isDelete;
     };
     return Dictionary;
 }());
