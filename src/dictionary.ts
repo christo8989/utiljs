@@ -1,73 +1,96 @@
 'use-strict';
 
-class DictionaryItem {
-    private IsDictionaryItem;
-    public constructor (public key: string, public value: any) {
-        this.IsDictionaryItem = true;
-    }
-}
-
 class Dictionary {
     public constructor ();
-    public constructor (dicationary: Object);
-    public constructor (dicationary: Dictionary);
-    public constructor (dictionary: DictionaryItem[]);
-    public constructor (dictionary?) {
-        if (Array.isArray(dictionary)) {
-            // Array of DictionaryItems
-            for (let item in dictionary) {
-                if (dictionary.hasOwnProperty(item)) {
-                    this.addDictionaryItem(dictionary[item]);
-                }
-            }
-        } else if (dictionary != null && dictionary.IsDictionaryItem) {
-            // Object of DictionaryItem
-            this.addDictionaryItem(dictionary);
-        } else if (dictionary != null) {
-            // Object
-            for (let item in dictionary) {
-                if (dictionary.hasOwnProperty(item)) {
-                    let key = item;
-                    let value = dictionary[item];
-                    this[key] = value;
+    public constructor (object: Object);
+    public constructor (object?) {
+        if (object != null) {
+            for (let property in object) {
+                if (object.hasOwnProperty(property)) {
+                    this[property] = object[property];
                 }
             }
         }
     }
 
-    public getDictionary() {
-        return this;
+    /**
+     * Returns a copy of this object.
+     */
+    public clone(): Dictionary {
+        let result = new Dictionary(this);
+        return result;
     }
 
-    public getKeys(): string[] {
+    /**
+     * Checks if the key exists.
+     * @param {string} key 
+     */
+    public exists(key: string): boolean {
+        let result = this.hasOwnProperty(key);
+        return result;
+    }
+
+    /**
+     * Returns all the keys.
+     */
+    public keys(): string[] {
         let result = [];
-        for (let item in this) {
-            if (this.hasOwnProperty(item)) {
-                result.push(item);
+        for (let key in this) {
+            if (this.exists(key)) {
+                result.push(key);
             }
         }
         return result;
     }
 
-    public getValues() {
+    /**
+     * Returns all the values.
+     */
+    public values(): any[] {
         let result = [];
-        for (let item in this) {
-            if (this.hasOwnProperty(item)) {
-                result.push(this[item]);
+        for (let key in this) {
+            if (this.exists(key)) {
+                result.push(this[key]);
             }
         }
         return result;
     }
 
-    public getValue(key: string) {
-        return this[key];
+    /**
+     * Adds a the value if the key doesn't exist.
+     * @param {string} key 
+     * @param {any} value 
+     */
+    public tryAdd(key: string, value: any): boolean {
+        let isAdd = !this.exists(key) && typeof(value) !== 'undefined';
+        if (isAdd) {
+            this[key] = value;
+        }
+        return isAdd;
     }
 
-    public addItem(key: string, value: any) {
-        this[key] = value;
+    /**
+     * Updates the value if the key exists.
+     * @param {string} key 
+     * @param {any} value 
+     */
+    public tryUpdate(key: string, value: any): boolean {
+        let isUpdate = this.exists(key) && typeof(value) !== 'undefined';
+        if (isUpdate) {
+            this[key] = value;
+        }
+        return isUpdate;
     }
 
-    public addDictionaryItem(item: DictionaryItem) {
-        this[item.key] = item.value;
+    /**
+     * Deletes the item if the key exists.
+     * @param {string} key 
+     */
+    public tryDelete(key: string): boolean {
+        let isDelete = this.exists(key);
+        if (isDelete) {
+            delete this[key];
+        }
+        return isDelete;
     }
 }

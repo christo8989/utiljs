@@ -1,12 +1,13 @@
+/// <reference path="./dictionary.ts" />
 'use-strict';
 
 class Uri {
-    // https://www.domain.com:443/path/name?query=string#hash
+    // Example: https://www.domain.com:443/path/name?query=string#hash
     private protocol: string; // https:
     private host: string; // www.domain.com
     private port: string; // 443 (default)
     private path: string; // path/name
-    private query: string; // ?query=string
+    private queryString: string; // ?query=string
     private hash: string; // hash
     private base: string;
     private url: string;
@@ -18,11 +19,14 @@ class Uri {
         this.host = location.hostname;
         this.port = location.port || '443';
         this.path = this.removeTrailingSlash(location.pathname);
-        this.query = location.search.replace('?', '');
+        this.queryString = location.search.replace('?', '');
         this.hash = location.hash.replace('#', '');
     }
 
-    public getBase() {
+    /**
+     * Example: https://www.domain.com:443
+     */
+    get Base(): string {
         if (this.base == null) {
             this.base = `${this.protocol}//${this.host}:${this.port}`;
         }
@@ -30,41 +34,60 @@ class Uri {
         return this.base;
     }
 
-    public getOrigin() {
+    /**
+     * Example: https://www.domain.com:443/path/name
+     */
+    get Origin(): string {
         if (this.url == null) {
-            this.url = `${this.getBase()}${this.path}`;
+            this.url = `${this.Base}${this.path}`;
         }
 
         return this.url;
     }
 
-    public getHref() {
+    /**
+     * Example: https://www.domain.com:443/path/name?query=string#hash
+     */
+    get Href(): string {
         if (this.href == null) {
-            let queryString = this.getQueryString().length > 0
-                ? `?${this.getQueryString()}`
+            let queryString = this.QueryString.length > 0
+                ? `?${this.QueryString}`
                 : '';
-            let hashString = this.getHash().length > 0
-                ? `#${this.getHash()}`
+            let hashString = this.Hash.length > 0
+                ? `#${this.Hash}`
                 : '';
-            this.href = `${this.getOrigin()}${queryString}${hashString}`;
+            this.href = `${this.Origin}${queryString}${hashString}`;
         }
 
         return this.href;
     }
 
-    public getQueryString() {
-        return this.query;
+    /**
+     * Example: query=string
+     */
+    get QueryString(): string {
+        return this.queryString;
     }
 
-    public getParameters() {
+    /**
+     * Example: hash
+     */
+    get Hash(): string {
+        return this.hash;
+    }
+
+    /**
+     * Query parameters as a Dictionary.
+     */
+    get Parameters(): Dictionary {
         if (this.queryDictionary == null) {
-            let result = [];
-            let params = this.query.split('&');
+            let result = {};
+            let params = this.QueryString.split('&');
             for (let i = 0; i < params.length; ++i) {
                 let keyValue = params[i].split('=');
                 let key = keyValue[0];
                 let value = keyValue[1];
-                result.push(new DictionaryItem(key, value));
+                result[key] = value;
             }
             this.queryDictionary = new Dictionary(result);
         }
@@ -72,15 +95,20 @@ class Uri {
         return this.queryDictionary;
     }
 
-    public getParameter(name: string) {
-        return this.getParameters()[name];
+    /**
+     * Returns the value of the specified query parameter.
+     * @param {string} name 
+     */
+    public parameter(name: string): string {
+        let result = this.Parameters[name];
+        return result;
     }
 
-    public getHash() {
-        return this.hash;
-    }
-
-    private removeTrailingSlash(path: string) {
+    /**
+     * Removes the trailing slash from a url.
+     * @param {string} path
+     */
+    private removeTrailingSlash(path: string): string {
         let lastIndex = path.length - 1;
         if (lastIndex >= 0) {
             let lastChar = path.charAt(lastIndex);

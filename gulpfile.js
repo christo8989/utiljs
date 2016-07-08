@@ -29,7 +29,7 @@ var tscompile = 'ts-compile';
 gulp.task(tscompile, function () {
     return gulp.src(config.allTypeScript)
         .pipe(sourcemaps.init())
-        .pipe(tsc({ sortOutput: true }))
+        .pipe(tsc(config.tscOptions))
         .js.pipe(rename({ extname: '.min.js' }))
             .pipe(minify())
             .pipe(sourcemaps.write(config.sourcemaps))
@@ -42,7 +42,11 @@ gulp.task(tscompile, function () {
 var compileDefinitions = 'ts-compile-definitions';
 gulp.task(compileDefinitions, function () {
     return gulp.src(config.allTypeScript)
-        .pipe(tsc({ declaration: true }))
+        .pipe(tsc({
+            target: 'ES5',
+            declaration: true,
+            sortOutput: true,
+        }))
         .dts.pipe(gulp.dest(config.definitions));
 });
 
@@ -56,7 +60,7 @@ gulp.task(compileDefinitions, function () {
 var prejscompile = 'js-compile';
 gulp.task(prejscompile, function () {
    return gulp.src(config.allTypeScript)
-        .pipe(tsc({ sortOutput: true }))
+        .pipe(tsc(config.tscOptions))
         .js.pipe(gulp.dest(config.jsoutput));        
 });
 

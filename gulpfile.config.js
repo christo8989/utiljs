@@ -13,6 +13,11 @@ var GulpConfig = (function () {
     
     this.typings = './typings/';
     this.libraryTypeScriptDefinitions = './typings/main/**/*.ts'; 
+
+    this.tscOptions = {
+        target: 'ES5',
+        sortOutput: true,
+    };
     
     return this;
 })();

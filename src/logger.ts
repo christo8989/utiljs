@@ -1,33 +1,62 @@
+/// <reference path="./uri.ts" />
+/// <reference path="./loggerLevels.ts" />
 'use-strict';
 
 class Logger {
-    private levels = {
-        INFO: 0,
-        VERBOSE: 1,
-    };
-
+    private levels;
     private level;
 
     public constructor(private uriHelper: Uri) {
-        let parameter = uriHelper.getParameter('--level');
-        this.level = parameter == null
-            ? this.levels.INFO
-            : this.getLevelObject(parameter).value;
+        let queryValue = uriHelper.parameter('--level');
+        this.levels = new LoggerLevels();
+        this.level = queryValue == null
+            ? this.levels.DEFAULT
+            : queryValue;
     }
 
-    public log(...args: any[]) {
-        if (this.level >= this.levels.INFO) {
+    /**
+     * Level for logging.
+     */
+    get Level(): string {
+        return this.level;
+    }
+
+    /**
+     * Level name for logging.
+     * @param {string} name 
+     */
+    get LevelName(): string {
+        return this.levels.name(this.Level);
+    }
+
+    /**
+     * Console logs when level is 0 (INFO) or higher.
+     * @param {...} args 
+     */
+    public log(...args: any[]): void {
+        if (this.Level >= this.levels.INFO) {
             console.log.apply(console, args);
         }
     }
 
-    public logVerbose(...args: any[]) {
-        if (this.level >= this.levels.VERBOSE) {
+    /**
+     * Console logs when level is 1 (VERBOSE) or higher.
+     * @param {...} args 
+     */
+    public logVerbose(...args: any[]): void {
+        if (this.Level >= this.levels.VERBOSE) {
             this.log.apply(this, args);
         }
     }
 
-    public logMetric(name: string, fn: Function, ...args: any[]) {
+    /**
+     * Measures amount of time to execute function.
+     * Then, console logs when level is 1 (VERBOSE) or higher.
+     * @param {string} name
+     * @param {Function} fn
+     * @param {...} args
+     */
+    public logMetric(name: string, fn: Function, ...args: any[]): any {
         if (performance == null) {
             this.log(`Error: Performance is ${performance}.`);
             return;
@@ -41,46 +70,6 @@ class Logger {
         args.push(`- ${time} ms`);
         this.logVerbose.apply(this, args);
 
-        return result;
-    }
-
-    public getLevelsEnum() {
-        return this.levels;
-    }
-
-    public getLevelValue(id: string) {
-        return this.getLevelObject(name).value;
-    }
-
-    public getLevelName(id: number) {
-        return this.getLevelObject(id).name;
-    }
-
-    public getCurrentLevel() {
-        return this.level;
-    }
-
-    public getCurrentLevelName() {
-        return this.getLevelName(this.level);
-    }
-
-    private getLevelObject(id: any) {
-        let result = { name: 'INFO', value: this.levels.INFO };
-        if (typeof(id) !== 'string' && typeof(id) !== 'number') {
-            // TODO: Log error?
-            return result;
-        }
-
-        id = id.toString();
-        for (let property in this.levels) {
-            if (this.levels.hasOwnProperty(property)) {
-                if (id.toUpperCase() === property.toUpperCase()
-                    || id == this.levels[property]) { // tslint:disable-line
-                    result.name = property;
-                    result.value = this.levels[property];
-                }
-            }
-        }
         return result;
     }
 }
